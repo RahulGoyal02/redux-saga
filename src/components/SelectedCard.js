@@ -9,7 +9,16 @@ import {
 } from "recompose";
 import { useEffect } from "react";
 
-const SelectedCard = ({ data, GoBack, postHandler, GetLocalStorage }) => {
+
+
+const SelectedCard = ({ selected, GoBack, postHandler, GetLocalStorage,selectedPost }) => {
+  // const { id } = useParams();
+  // useEffect(() => {
+  //   console.log("goyaL")
+  // selectedPost(id)
+  // }, []);
+
+  
   return (
     <>
       <button className="btn btn-primary" onClick={GoBack}>
@@ -22,8 +31,8 @@ const SelectedCard = ({ data, GoBack, postHandler, GetLocalStorage }) => {
           alt="..."
         />
         <div className="card-body">
-          <h5 className="card-title">{GetLocalStorage()?.title}</h5>
-          <p className="card-text">{GetLocalStorage()?.body}</p>
+          <h5 className="card-title">{selected?.title}</h5>
+          <p className="card-text">{selected?.body}</p>
         </div>
       </div>
     </>
@@ -32,53 +41,60 @@ const SelectedCard = ({ data, GoBack, postHandler, GetLocalStorage }) => {
 const enhance = compose(
   connect(
     (store) => ({
-      data: store.data,
+      selected: store.selected,
+      
     }),
     (dispatch) => ({
       postError: () => dispatch({ type: "POST_ERROR" }),
       postRequest: () => dispatch({ type: "POST_REQ" }),
       postHandler: (data) => dispatch({ type: "FETCH_API", payload: data }),
+      selectedPost: (id) => dispatch({ type: "FETCH_BY_ID", payload: id})
     })
   ),
   withProps(() => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const setLS = (data) => localStorage.setItem("post", JSON.stringify(data));
-    const GetLocalStorage = () => {
-      let post = localStorage.getItem("post");
-      return JSON.parse(post);
-    };
+    // const setLS = (data) => localStorage.setItem("post", JSON.stringify(data));
+    // const GetLocalStorage = () => {
+    //   let post = localStorage.getItem("post");
+    //   return JSON.parse(post);
+    // };
     return {
       navigate,
-      id,
-      GetLocalStorage,
-      setLS,
+      id
+      // id,
+      // GetLocalStorage,
+      // setLS,
     };
   }),
   withHandlers({
     GoBack:
-      ({ navigate }) =>
+      ({ navigate,postHandler }) =>
       () => {
         navigate(`/`);
+        // postHandler()
       },
   }),
   lifecycle({
     componentDidMount() {
-      console.log(this.props.data);
-      const selectedPost = this.props.data?.find(
-        (post) => post.id === Number(this.props.id)
-      );
-      console.log(selectedPost);
-      if (
-        selectedPost?.id != JSON.parse(localStorage.getItem("post"))?.id &&
-        this.props.data.length > 0
-      ) {
-        this.props.setLS(selectedPost);
-        localStorage.setItem("post", JSON.stringify(selectedPost) || {});
-      }
-      this.props.postHandler();
+      console.log("goyal")
+      this.props.selectedPost(this.props.id)
+      // console.log(this.props.data);
+      // const selectedPost = this.props.data?.find(
+      //   (post) => post.id === Number(this.props.id)
+      // );
+      // console.log(selectedPost);
+      // if (
+      //   selectedPost?.id != JSON.parse(localStorage.getItem("post"))?.id &&
+      //   this.props.data.length > 0
+      // ) {
+      //   this.props.setLS(selectedPost);
+      //   localStorage.setItem("post", JSON.stringify(selectedPost) || {});
+      // }
+      // this.props.postHandler();
 
       // console.log("selectedPost", selectedPost);
+
     },
   })
 );

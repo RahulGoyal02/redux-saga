@@ -2,9 +2,10 @@ import "./App.css";
 import Card from "./components/Card";
 import SelectedCard from "./components/SelectedCard"
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, } from "react-router-dom";
 
 function App() {
+
   return (
     <>
       <BrowserRouter>
